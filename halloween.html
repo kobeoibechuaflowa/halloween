@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Halloween — Đêm Kinh Dị</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@400&family=Nosifer&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg1: #050406;
+      --bg2: #0b0710;
+      --accent: #ff3b3b;
+      --fog: rgba(200,200,200,0.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+    body{
+      background: radial-gradient(ellipse at 20% 10%, rgba(80,0,0,0.12), transparent 10%),
+                  linear-gradient(180deg, rgba(10,8,16,1) 0%, rgba(3,2,6,1) 60%, #030103 100%);
+      color:#f1f1f1;
+      overflow:hidden;
+      -webkit-font-smoothing:antialiased;
+      position:relative;
+    }
+
+    /* Fog animation */
+    .fog {
+      position:fixed; inset:0; pointer-events:none;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(255,255,255,0.02) 0%, transparent 20%),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.02) 0%, transparent 25%);
+      mix-blend-mode: overlay;
+      z-index:2;
+      animation: drift 40s linear infinite;
+    }
+    .fog::after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 60%);
+      filter: blur(60px);
+      opacity:0.8;
+      animation: slow 60s linear infinite;
+    }
+    @keyframes drift { from {transform:translateX(-20%)} to {transform:translateX(20%)} }
+    @keyframes slow { from{transform:translateY(-5%)} to{transform:translateY(5%)} }
+
+    .stage{
+      position:relative;
+      width:100%;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:5;
+      text-align:center;
+      padding:2rem;
+    }
+
+    .card{
+      width:min(1000px, 94%);
+      padding:3rem;
+      border-radius:16px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.35));
+      box-shadow: 0 10px 50px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.02);
+      backdrop-filter: blur(4px) saturate(1.2);
+      position:relative;
+      overflow:hidden;
+    }
+
+    h1{
+      margin:0 0 0.6rem 0;
+      font-family: 'UnifrakturCook','Nosifer', Georgia, serif;
+      font-size: clamp(36px, 6vw, 68px);
+      letter-spacing: 2px;
+      text-shadow:
+        0 0 8px rgba(255,59,59,0.12),
+        0 2px 20px rgba(0,0,0,0.9);
+      color: #ff8b8b;
+      animation: flicker 3s infinite;
+    }
+    @keyframes flicker {
+      0%,100%{opacity:1;text-shadow:0 0 14px rgba(255,59,59,0.18)}
+      45%{opacity:0.6;text-shadow:none}
+      60%{opacity:1}
+    }
+
+    .subtitle{
+      font-size:1.1rem;
+      opacity:0.8;
+      margin-bottom:1.2rem;
+      letter-spacing:1px;
+    }
+
+    .type {
+      display:inline-block;
+      font-family: monospace;
+      font-size:1rem;
+      color:#ffdede;
+      border-right:2px solid rgba(255,255,255,0.14);
+      white-space:nowrap;
+      overflow:hidden;
+      width:0;
+      animation: typing 6s steps(40,end) 1s forwards, caret 600ms steps(1) infinite;
+      opacity:0;
+    }
+    @keyframes typing {
+      from {width:0; opacity:1}
+      to {width:100% ; opacity:1}
+    }
+    @keyframes caret {
+      50% {border-color: transparent}
+    }
+
+    .eyes{
+      display:inline-flex;
+      gap:1rem;
+      margin-top:1.4rem;
+      align-items:center;
+      justify-content:center;
+    }
+    .eye{
+      width:60px;height:60px;border-radius:50%;
+      background:linear-gradient(180deg,#fff 0%, #eee 60%);
+      display:grid; place-items:center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6), inset -6px -8px 18px rgba(0,0,0,0.18);
+      position:relative;
+      overflow:hidden;
+    }
+    .pupil{
+      width:22px;height:22px;background:#0b0b0b;border-radius:50%;
+      transition: transform 0.08s linear;
+      box-shadow: 0 0 12px rgba(255,59,59,0.12);
+    }
+
+    .controls{
+      margin-top:1.5rem;
+      display:flex; gap:12px; justify-content:center; align-items:center;
+    }
+    .btn{
+      background:transparent;
+      border:2px solid rgba(255,255,255,0.08);
+      padding:0.6rem 1rem;
+      border-radius:10px;
+      color:#fff;
+      cursor:pointer;
+      backdrop-filter: blur(4px);
+      transition: all 220ms ease;
+      font-weight:600;
+      letter-spacing:0.6px;
+    }
+    .btn:hover{transform:translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.6)}
+    .btn.primary{
+      background: linear-gradient(90deg, rgba(255,59,59,0.14), rgba(255,120,60,0.06));
+      border-color: rgba(255,59,59,0.28);
+    }
+
+    /* shake + flash */
+    @keyframes shake {
+      0%,100% { transform: translate(0, 0); }
+      10% { transform: translate(-30px, 20px) rotate(-2deg); }
+      20% { transform: translate(30px, -20px) rotate(2deg); }
+      30% { transform: translate(-25px, 15px) rotate(-1deg); }
+      40% { transform: translate(25px, -15px) rotate(1deg); }
+      50% { transform: translate(-20px, 10px); }
+      60% { transform: translate(20px, -10px); }
+      70% { transform: translate(-15px, 8px); }
+      80% { transform: translate(15px, -8px); }
+      90% { transform: translate(-10px, 5px); }
+    }
+    .shake {animation: shake 0.07s linear infinite;}
+    @keyframes jitter {
+      0%,100% { transform: scale(0.3) translate(0,0); }
+      25% { transform: scale(0.35) translate(-5px,3px); }
+      50% { transform: scale(0.4) translate(5px,-4px); }
+      75% { transform: scale(0.35) translate(-3px,2px); }
+    }
+    #flash {
+      position: fixed;
+      inset: 0;
+      background: white;
+      opacity: 0;
+      z-index: 10000;
+      pointer-events: none;
+    }
+    .flash-on {animation: flashEffect 0.2s ease-in-out 1;}
+    @keyframes flashEffect {
+      0% { opacity: 0; }
+      40% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="fog"></div>
+
+  <div class="stage">
+    <div class="card">
+      <h1>ĐÊM HALLOWEEN</h1>
+      <div class="subtitle">Đêm nay... có điều gì đó theo dõi bạn.</div>
+      <div><span class="type">Bạn có nghe thấy tiếng thì thầm... không?</span></div>
+      <div class="eyes">
+        <div class="eye"><div class="pupil"></div></div>
+        <div class="eye"><div class="pupil"></div></div>
+      </div>
+      <div class="controls">
+        <button class="btn primary" id="startBtn">Start — Bật âm thanh</button>
+        <button class="btn" id="scareBtn">Gọi Jump-Scare</button>
+      </div>
+
+      <!-- 🎵 Nhạc nền -->
+      <audio id="ambient" loop preload="auto">
+        <source src="long.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+  </div>
+
+  <div class="hint">Nhấn "Start" để bật nhạc, "Gọi Jump-Scare" nếu bạn đủ can đảm.</div>
+
+  <!-- Jump scare -->
+  <div id="jumpscare" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:9999;background:#000;">
+    <img id="scareImg" src="anh.jpg" alt="Jumpscare" style="width:180px;height:auto;opacity:0;transform:scale(0.1);filter:drop-shadow(0 0 40px #000)">
+  </div>
+
+  <div id="flash"></div>
+
+  <script>
+    const scareBtn = document.getElementById('scareBtn');
+    const overlay = document.getElementById('jumpscare');
+    const img = document.getElementById('scareImg');
+    const flash = document.getElementById('flash');
+    const startBtn = document.getElementById('startBtn');
+    const ambient = document.getElementById('ambient');
+
+    // 🎵 Khi ấn Start — phát nhạc nền
+    startBtn.addEventListener('click', () => {
+      ambient.volume = 0.6;
+      ambient.play().then(() => {
+        startBtn.disabled = true;
+        startBtn.textContent = "🎃 Nhạc đang phát...";
+      }).catch(() => {
+        alert("Trình duyệt đang chặn phát nhạc — hãy nhấn lại nút Start!");
+      });
+    });
+
+    // 💀 Khi ấn Jump-Scare
+    scareBtn.addEventListener('click', () => {
+      overlay.style.display = 'flex';
+      document.body.classList.add('shake');
+      img.style.opacity = '1';
+      img.style.animation = 'jitter 0.3s infinite';
+      img.style.transform = 'scale(0.3)';
+
+      setTimeout(() => {
+        img.style.animation = '';
+        img.style.transition = 'transform 0.25s ease-in';
+        img.style.transform = 'scale(6)';
+        flash.classList.add('flash-on');
+      }, 1000);
+
+      const scream = new Audio("nhac.mp3");
+      scream.volume = 1;
+      scream.play().catch(()=>{});
+
+      setTimeout(() => {
+        document.body.classList.remove('shake');
+        flash.classList.remove('flash-on');
+        overlay.animate([{opacity:1},{opacity:0}], {duration:800, fill:'forwards'});
+        setTimeout(() => {
+          overlay.style.display = 'none';
+          img.style.opacity = '0';
+          img.style.transform = 'scale(0.1)';
+        }, 900);
+      }, 2500);
+    });
+  </script>
+</body>
+</html>
